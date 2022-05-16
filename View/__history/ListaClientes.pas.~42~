@@ -1,0 +1,300 @@
+unit ListaClientes;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
+  FMX.ListView, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
+  ServiceCliente, CadastroClientes, Data.DB, Datasnap.DBClient, System.Rtti,
+  System.Bindings.Outputs, Fmx.Bind.Editors, Data.Bind.EngExt,
+  Fmx.Bind.DBEngExt, Data.Bind.Components, Data.Bind.DBScope,
+  //uConfigurarConexao,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Intf, FireDAC.Phys.MySQLDef, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MySQL,
+  FireDAC.FMXUI.Wait, FireDAC.DApt, uConfigurarConexao, Cliente;
+
+type
+  TFiltroParametros = class
+public
+  NomeCliente: String;
+  Telefone: String;
+  Cidade: String;
+  Excluido: Boolean;
+end;
+
+  TFormListarClientes = class(TForm)
+    Layout1: TLayout;
+    btnBuscarCliente: TButton;
+    cdsClientes: TClientDataSet;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkFillControlToField1: TLinkFillControlToField;
+    CheckBoxNome: TCheckBox;
+    edtFiltroNome: TEdit;
+    CheckBoxTelefone: TCheckBox;
+    edtFiltroTelefone: TEdit;
+    CheckBoxCidade: TCheckBox;
+    edtFiltroCidade: TEdit;
+    CheckBoxTodos: TCheckBox;
+    Layout2: TLayout;
+    btnNovoCadastro: TButton;
+    btnEditar: TButton;
+    btnExcluir: TButton;
+    Panel1: TPanel;
+    HorzScrollBox1: THorzScrollBox;
+    Layout4: TLayout;
+    lLabels: TLayout;
+    lbId: TLabel;
+    lbNome: TLabel;
+    lbArea: TLabel;
+    lbEndereco: TLabel;
+    lbTelefone: TLabel;
+    lbCEP: TLabel;
+    lbCidade: TLabel;
+    lbComplemento: TLabel;
+    lbBairro: TLabel;
+    lbNumero: TLabel;
+    lvClientes: TListView;
+    LinkFillControlToField2: TLinkFillControlToField;
+    procedure btnNovoCadastroClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure btnBuscarClienteClick(Sender: TObject);
+    procedure edtBuscarClienteKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
+    procedure CheckBoxTodosChange(Sender: TObject);
+    procedure CheckBoxNomeChange(Sender: TObject);
+    procedure CheckBoxTelefoneChange(Sender: TObject);
+    procedure CheckBoxCidadeChange(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    procedure BuscarClientes;
+    procedure ColorirClientesExcluidos;
+    procedure AtribuirCamposDataSet(var Cliente: TCliente);
+    function GetParametrosFiltro: TFiltroParametros;
+    function MontarFiltro(parametros: TFiltroParametros): String;
+  end;
+
+var
+  FormListarClientes: TFormListarClientes;
+  filtro: String;
+
+implementation
+
+{$R *.fmx}
+
+procedure TFormListarClientes.AtribuirCamposDataSet(var Cliente: TCliente);
+begin
+  Cliente.id          := cdsClientes.FieldByName('id').AsInteger;
+  Cliente.nome        := cdsClientes.FieldByName('nome').AsString;
+  Cliente.telefone    := cdsClientes.FieldByName('telefone').AsString;
+  Cliente.rua         := cdsClientes.FieldByName('endereco').AsString;
+  Cliente.bairro      := cdsClientes.FieldByName('bairro').AsString;
+  Cliente.numero      := cdsClientes.FieldByName('numero').AsString;
+  Cliente.CEP         := cdsClientes.FieldByName('cep').AsString;
+  Cliente.cidade      := cdsClientes.FieldByName('cidade').AsString;
+  Cliente.area        := cdsClientes.FieldByName('area').AsString;
+  Cliente.complemento := cdsClientes.FieldByName('complemento').AsString;
+end;
+
+procedure TFormListarClientes.btnBuscarClienteClick(Sender: TObject);
+begin
+  //if not edtBuscarCliente.Text.IsEmpty then
+  //filtro := 'WHERE nome LIKE "' + edtBuscarCliente.Text + '%"';
+
+  BuscarClientes;
+  //edtBuscarCliente.Text := '';
+end;
+
+procedure TFormListarClientes.btnEditarClick(Sender: TObject);
+var
+  Cliente: TCliente;
+begin
+  try
+    Cliente := TCliente.Create;
+
+    if (lvClientes.Items.Count = 0) or
+      (lvClientes.Selected = nil) then
+      Exit;
+
+    cdsClientes.RecNo := lvClientes.Selected.Index + 1;
+    AtribuirCamposDataSet(Cliente);
+    ExibirTela(Cliente);
+    BuscarClientes;
+  finally
+    FreeAndNil(Cliente);
+  end;
+end;
+
+procedure TFormListarClientes.btnExcluirClick(Sender: TObject);
+  var
+  Service: TServiceCliente;
+  Cliente: TCliente;
+begin
+  try
+    if not (lvClientes.Items.Count > 0) and
+      not (lvClientes.Selected <> nil) then
+      Exit;
+
+    cdsClientes.RecNo := lvClientes.Selected.Index + 1;
+
+    Cliente    := TCliente.Create;
+    Cliente.id := cdsClientes.FieldByName('id').AsInteger;
+
+    Service := TServiceCliente.Create(conexao, Cliente);
+    Service.ExcluirCliente;
+    BuscarClientes;
+  finally
+    FreeAndNil(Service);
+    FreeAndNil(Cliente);
+  end;
+end;
+
+procedure TFormListarClientes.btnNovoCadastroClick(Sender: TObject);
+begin
+  ExibirTela();
+  BuscarClientes;
+end;
+
+procedure TFormListarClientes.BuscarClientes;
+var
+  Service: TServiceCliente;
+begin
+  try
+    CONEXAO := TFDConnection.Create(self);
+    ConfigurarConexao;
+    Service := TServiceCliente.Create(CONEXAO, MontarFiltro(GetParametrosFiltro));
+    Service.BuscarClientes(cdsClientes);
+    ColorirClientesExcluidos;
+  finally
+    FreeAndNil(Service);
+  end;
+end;
+
+procedure TFormListarClientes.CheckBoxCidadeChange(Sender: TObject);
+begin
+  if not edtFiltroCidade.Text.IsEmpty then
+    btnBuscarClienteClick(Sender);
+end;
+
+procedure TFormListarClientes.CheckBoxNomeChange(Sender: TObject);
+begin
+  if not edtFiltroNome.Text.IsEmpty then
+    btnBuscarClienteClick(Sender);
+end;
+
+procedure TFormListarClientes.CheckBoxTelefoneChange(Sender: TObject);
+begin
+  if not edtFiltroTelefone.Text.IsEmpty then
+    btnBuscarClienteClick(Sender);
+end;
+
+procedure TFormListarClientes.CheckBoxTodosChange(Sender: TObject);
+begin
+  btnBuscarClienteClick(Sender);
+end;
+
+procedure TFormListarClientes.ColorirClientesExcluidos;
+var
+  i: integer;
+begin
+  with formListarClientes do
+  begin
+    for i := 0 to lvClientes.Items.Count - 1 do
+    begin
+      cdsClientes.Open;
+      cdsClientes.RecNo := i + 1;
+      if cdsClientes.FieldByName('excluido').AsBoolean then
+      begin
+        with lvClientes do
+        begin
+          Items[i].Objects.FindObjectT<TListItemText>('id').TextColor          := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('nome').TextColor        := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('endereco').TextColor    := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('cidade').TextColor      := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('telefone').TextColor    := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('CEP').TextColor         := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('area').TextColor        := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('complemento').TextColor := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('bairro').TextColor      := TAlphaColorRec.Red;
+          Items[i].Objects.FindObjectT<TListItemText>('numero').TextColor      := TAlphaColorRec.Red;
+        end;
+      end;
+    end;
+    lvClientes.Selected := nil;
+    lvClientes.ScrollTo(0);
+  end;
+end;
+
+procedure TFormListarClientes.edtBuscarClienteKeyDown(Sender: TObject;
+  var Key: Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  begin
+  if Key = vkReturn then
+    begin
+      btnBuscarCliente.SetFocus;
+      Exit;
+    end;
+  end;
+end;
+
+procedure TFormListarClientes.FormCreate(Sender: TObject);
+begin
+  CheckBoxTodos.IsChecked := true;
+  BuscarClientes;
+end;
+
+function TFormListarClientes.GetParametrosFiltro: TFiltroParametros;
+begin
+  result := TFiltroParametros.Create;
+
+  result.Excluido := not (CheckBoxTodos.IsChecked);
+
+  if CheckBoxNome.IsChecked then
+    result.NomeCliente := edtFiltroNome.Text;
+
+  if CheckBoxTelefone.IsChecked then
+    result.Telefone := edtFiltroTelefone.Text;
+
+  if CheckBoxCidade.IsChecked then
+    result.Cidade := edtFiltroCidade.Text;
+
+end;
+
+function TFormListarClientes.MontarFiltro(parametros: TFiltroParametros): String;
+  function MBoolean(Excluido: boolean): String;
+  begin
+    result := 'false';
+
+    if Excluido then
+      result := 'true';
+  end;
+begin
+  result := '';
+
+  with parametros do
+  begin
+    if not NomeCliente.IsEmpty then
+      result := ' AND nome LIKE "%' + NomeCliente + '%" ';
+
+    result := result + ' AND excluido = ' + MBoolean(Excluido);
+
+
+    if not Cidade.IsEmpty then
+        result := result + ' AND cidade LIKE "%' + Cidade + '%" ';
+
+    if not Telefone.IsEmpty then
+      result := result + ' AND telefone LIKE "%' + Telefone + '%" ';
+  end;
+end;
+
+{ TFiltroParametros }
+
+end.

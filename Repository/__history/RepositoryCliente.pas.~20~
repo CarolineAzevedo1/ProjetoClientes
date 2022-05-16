@@ -1,0 +1,270 @@
+unit RepositoryCliente;
+
+interface
+
+uses
+  Cliente, System.Generics.Collections, FireDAC.Comp.Client, FireDAC.DApt, System.SysUtils,
+  uConfigurarConexao;
+  //uConfigurarConexao;
+
+type
+
+TRepository = class
+public
+  Cliente: TCliente;
+  FiltroBuscar: String;
+
+  function BuscarClientes: TObjectList<TCliente>;
+  function BuscarAreas: TList<String>;
+  function GetDescricaoArea(id_area: Integer): String;
+  function GetIdArea(descricao: String): Integer;
+  procedure AtualizarCliente;
+  procedure InserirCliente;
+  procedure ExcluirCliente;
+  constructor CreateFiltro(FDCon: TFDConnection; filtro: String); overload;
+  constructor CreateCliente(FDCon: TFDConnection; pCliente: TCliente); overload;
+end;
+//var
+  //CONEXAO: TFDConnection;
+
+implementation
+
+{ TRepository }
+
+procedure TRepository.AtualizarCliente;
+var
+  Qry: TFDQuery;
+begin
+  try
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('UPDATE delivery_cliente SET id_area = :id_area,');
+        Add('telefone = :telefone, nome = :nome,');
+        Add('cep = :cep, endereco = :endereco, numero = :numero,');
+        Add('complemento = :complemento, cidade = :cidade, bairro = :bairro');
+        Add('sincronizado = false');
+        Add('WHERE id = :id');
+      end;
+      ParamByName('id_area').AsInteger    := GetIdArea(Cliente.area);
+      ParamByName('telefone').AsString    := Cliente.telefone;
+      ParamByName('nome').AsString        := Cliente.nome;
+      ParamByName('cep').AsString         := Cliente.cep;
+      ParamByName('endereco').AsString    := Cliente.rua;
+      ParamByName('numero').AsString      := Cliente.numero;
+      ParamByName('complemento').AsString := Cliente.complemento;
+      ParamByName('cidade').AsString      := Cliente.cidade;
+      ParamByName('bairro').AsString      := Cliente.bairro;
+      ParamByName('id').AsInteger         := Cliente.id;
+      ExecSQL;
+      Close;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+end;
+
+function TRepository.BuscarAreas: TList<String>;
+var
+  Qry: TFDQuery;
+begin
+  try
+    result := TList<String>.Create;
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('SELECT  id, id_origem, descricao, valor, excluido');
+        Add('FROM delivery_area WHERE excluido = false ORDER BY id DESC LIMIT 100000');
+      end;
+     Open;
+
+      while not EOF do
+      begin
+        result.Add(FieldByName('descricao').AsString);
+        Next;
+      end;
+      Close;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+end;
+
+function TRepository.BuscarClientes: TObjectList<TCliente>;
+var
+  Qry: TFDQuery;
+  busca_cliente: TCliente;
+begin
+  try
+    result := TObjectList<TCliente>.Create;
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('SELECT * FROM delivery_cliente');
+
+        if not FiltroBuscar.IsEmpty then
+          Add(FiltroBuscar);
+      end;
+      Open;
+
+      while not EOF do
+      begin
+        busca_cliente             := TCliente.Create();
+        busca_cliente.id          := FieldByName('id').AsInteger;
+        busca_cliente.area        := GetDescricaoArea(FieldByName('id_area').AsInteger);
+        busca_cliente.telefone    := FieldByName('telefone').AsString;
+        busca_cliente.nome        := FieldByName('nome').AsString;
+        busca_cliente.cep         := FieldByName('cep').AsString;
+        busca_cliente.rua         := FieldByName('endereco').AsString;
+        busca_cliente.numero      := FieldByName('numero').AsString;
+        busca_cliente.complemento := FieldByName('complemento').AsString;
+        busca_cliente.cidade      := FieldByName('cidade').AsString;
+        busca_cliente.bairro      := FieldByName('bairro').AsString;
+        result.Add(busca_cliente);
+        Next;
+      end;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+end;
+
+constructor TRepository.CreateCliente(FDCon: TFDConnection; pCliente: TCliente);
+begin
+  Cliente := pCliente;
+end;
+
+procedure TRepository.ExcluirCliente;
+var
+  Qry: TFDQuery;
+begin
+  try
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('UPDATE delivery_cliente SET');
+        Add('excluido = 1, excluido_id_usuario = 99, excluido_data = now(),');
+        Add('sincronizado = false WHERE id = :id');
+        ParamByName('id').AsInteger := Cliente.id;
+        ExecSQL;
+        Close;
+      end;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+end;
+
+function TRepository.GetDescricaoArea(id_area: Integer): String;
+var
+  Qry: TFDQuery;
+begin
+  try
+    result := '';
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('SELECT descricao FROM delivery_area WHERE id = :id_area;');
+      end;
+      ParamByName('id_area').AsInteger := id_area;
+      Open;
+
+      if recordcount > 0 then
+        result := FieldByName('descricao').AsString;
+      Close;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+
+end;
+
+function TRepository.GetIdArea(descricao: String): Integer;
+var
+  Qry: TFDQuery;
+begin
+   try
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('SELECT id FROM delivery_area WHERE descricao = :descricao;');
+      end;
+      ParamByName('descricao').AsString := descricao;
+      Open;
+
+      if recordcount > 0 then
+        result := FieldByName('id').AsInteger;
+      Close;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+
+
+end;
+
+constructor TRepository.CreateFiltro(FDCon: TFDConnection; filtro: String);
+begin
+  FiltroBuscar := filtro;
+end;
+
+procedure TRepository.InserirCliente;
+var
+  Qry: TFDQuery;
+begin
+  try
+    Qry := TFDQuery.Create(nil);
+    Qry.Connection := conexao;
+
+    with Qry do
+    begin
+      with SQL do
+      begin
+        Add('INSERT INTO delivery_cliente (id_origem, id_area, excluido,');
+        Add('excluido_id_usuario, telefone, nome, cep,');
+        Add('endereco, numero, complemento, cidade, bairro, sincronizado)');
+        Add('VALUES (1, :id_area, 0, 0, :telefone, :nome, :cep,');
+        Add(':endereco, :numero, :complemento, :cidade, :bairro, 0)');
+      end;
+      ParamByName('id_area').AsInteger    := GetIdArea(Cliente.area);
+      ParamByName('telefone').AsString    := Cliente.telefone;
+      ParamByName('nome').AsString        := Cliente.nome;
+      ParamByName('cep').AsString         := Cliente.cep;
+      ParamByName('endereco').AsString    := Cliente.rua;
+      ParamByName('numero').AsString      := Cliente.numero;
+      ParamByName('complemento').AsString := Cliente.complemento;
+      ParamByName('cidade').AsString      := Cliente.cidade;
+      ParamByName('bairro').AsString      := Cliente.bairro;
+      ExecSQL;
+      Close;
+    end;
+  finally
+    FreeAndNil(Qry);
+  end;
+end;
+
+end.

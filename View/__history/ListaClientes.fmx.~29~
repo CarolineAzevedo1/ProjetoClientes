@@ -1,0 +1,517 @@
+object FormListarClientes: TFormListarClientes
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 450
+  ClientWidth = 750
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object Layout1: TLayout
+    Align = Top
+    Size.Width = 750.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btnBuscarCliente: TButton
+      Align = Right
+      Margins.Left = 80.000000000000000000
+      Margins.Top = 15.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 640.000000000000000000
+      Position.Y = 15.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 42.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Buscar'
+      OnClick = btnBuscarClienteClick
+    end
+    object CheckBoxNome: TCheckBox
+      Position.X = 16.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Nome'
+      OnChange = CheckBoxNomeChange
+    end
+    object edtFiltroNome: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 3
+      Position.X = 80.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object CheckBoxTelefone: TCheckBox
+      Position.X = 192.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Telefone'
+      OnChange = CheckBoxTelefoneChange
+    end
+    object edtFiltroTelefone: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 5
+      Position.X = 264.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object CheckBoxCidade: TCheckBox
+      Position.X = 376.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = 'Cidade'
+    end
+    object edtFiltroCidade: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      Position.X = 448.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object CheckBoxTodos: TCheckBox
+      Position.X = 568.000000000000000000
+      Position.Y = 24.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      Text = 'Ativos'
+      OnChange = CheckBoxTodosChange
+    end
+  end
+  object Layout2: TLayout
+    Align = Center
+    Size.Width = 636.000000000000000000
+    Size.Height = 333.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object btnNovoCadastro: TButton
+      Position.X = 504.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 41.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Novo Cadastro'
+      OnClick = btnNovoCadastroClick
+    end
+    object btnEditar: TButton
+      Position.X = 504.000000000000000000
+      Position.Y = 144.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 41.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Editar'
+      OnClick = btnEditarClick
+    end
+    object btnExcluir: TButton
+      Position.X = 504.000000000000000000
+      Position.Y = 240.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 41.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Excluir'
+      OnClick = btnExcluirClick
+    end
+    object Panel1: TPanel
+      Size.Width = 481.000000000000000000
+      Size.Height = 329.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object HorzScrollBox1: THorzScrollBox
+        Align = Client
+        Size.Width = 481.000000000000000000
+        Size.Height = 329.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Viewport.Width = 481.000000000000000000
+        Viewport.Height = 313.000000000000000000
+        object Layout4: TLayout
+          Position.X = 16.000000000000000000
+          Size.Width = 1050.000000000000000000
+          Size.Height = 310.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          object lLabels: TLayout
+            Align = Top
+            Size.Width = 1050.000000000000000000
+            Size.Height = 50.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object lbId: TLabel
+              Position.X = 72.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 33.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'ID'
+            end
+            object lbNome: TLabel
+              Position.X = 160.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 41.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Nome'
+            end
+            object lbArea: TLabel
+              Position.X = 264.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 41.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = #193'rea'
+            end
+            object lbEndereco: TLabel
+              Position.X = 368.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 65.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Endere'#231'o'
+            end
+            object lbTelefone: TLabel
+              Position.X = 472.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 57.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Telefone'
+            end
+            object lbCEP: TLabel
+              Position.X = 584.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 49.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'CEP'
+            end
+            object lbCidade: TLabel
+              Position.X = 688.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 49.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Cidade'
+            end
+            object lbComplemento: TLabel
+              Position.X = 768.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 89.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Complemento'
+            end
+            object lbBairro: TLabel
+              Position.X = 896.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 49.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Bairro'
+            end
+            object lbNumero: TLabel
+              Position.X = 984.000000000000000000
+              Position.Y = 24.000000000000000000
+              Size.Width = 49.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'N'#250'mero'
+            end
+          end
+          object lvClientes: TListView
+            ItemAppearanceClassName = 'TDynamicAppearance'
+            ItemEditAppearanceClassName = 'TDynamicAppearance'
+            HeaderAppearanceClassName = 'TListHeaderObjects'
+            FooterAppearanceClassName = 'TListHeaderObjects'
+            Align = Client
+            Margins.Left = 20.000000000000000000
+            Size.Width = 1030.000000000000000000
+            Size.Height = 260.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'id'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.Height = 44.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'nome'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.Height = 44.000000000000000000
+                Appearance.PlaceOffset.X = 104.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'endereco'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.PlaceOffset.X = 312.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'cidade'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.PlaceOffset.X = 624.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'telefone'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.PlaceOffset.X = 416.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'CEP'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.PlaceOffset.X = 520.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'area'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.PlaceOffset.X = 208.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'complemento'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.Height = 44.000000000000000000
+                Appearance.PlaceOffset.X = 728.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'bairro'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.Height = 44.000000000000000000
+                Appearance.PlaceOffset.X = 832.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'numero'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Width = 100.000000000000000000
+                Appearance.Height = 44.000000000000000000
+                Appearance.PlaceOffset.X = 936.000000000000000000
+              end>
+            ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'Text1'
+                AppearanceClassName = 'TTextObjectAppearance'
+              end>
+            ItemAppearanceObjects.HeaderObjects.Text.Width = 405.000000000000000000
+            ItemAppearanceObjects.HeaderObjects.Text.PlaceOffset.X = 24.000000000000000000
+            ItemAppearanceObjects.HeaderObjects.Text.PlaceOffset.Y = 40.000000000000000000
+            ItemAppearanceObjects.FooterObjects.Text.Width = 413.000000000000000000
+            ItemAppearanceObjects.FooterObjects.Text.Height = 56.000000000000000000
+          end
+        end
+      end
+    end
+  end
+  object cdsClientes: TClientDataSet
+    PersistDataPacket.Data = {
+      2B0100009619E0BD01000000180000000B0000000000030000002B0104617265
+      610100490000000100055749445448020002001400046E6F6D65010049000000
+      01000557494454480200020014000874656C65666F6E65010049000000010005
+      5749445448020002001400036365700100490000000100055749445448020002
+      00140008656E64657265636F0100490000000100055749445448020002001400
+      066E756D65726F01004900000001000557494454480200020014000B636F6D70
+      6C656D656E746F01004900000001000557494454480200020014000663696461
+      646501004900000001000557494454480200020014000662616972726F010049
+      0000000100055749445448020002001400026964040001000000000008657863
+      6C7569646F02000300000000000000}
+    Active = True
+    Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'area'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'nome'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'telefone'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'cep'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'endereco'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'numero'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'complemento'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'cidade'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'bairro'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'id'
+        DataType = ftInteger
+      end
+      item
+        Name = 'excluido'
+        DataType = ftBoolean
+      end>
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    Left = 8
+    Top = 184
+  end
+  object BindSourceDB1: TBindSourceDB
+    DataSet = cdsClientes
+    ScopeMappings = <>
+    Left = 8
+    Top = 120
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 20
+    Top = 61
+    object LinkFillControlToField1: TLinkFillControlToField
+      Category = 'Quick Bindings'
+      Track = True
+      FillDataSource = BindSourceDB1
+      AutoFill = True
+      FillExpressions = <
+        item
+          SourceMemberName = 'id'
+          ControlMemberName = 'id'
+        end
+        item
+          SourceMemberName = 'telefone'
+          ControlMemberName = 'telefone'
+        end
+        item
+          SourceMemberName = 'cep'
+          ControlMemberName = 'CEP'
+        end
+        item
+          SourceMemberName = 'endereco'
+          ControlMemberName = 'endereco'
+        end
+        item
+          SourceMemberName = 'numero'
+          ControlMemberName = 'numero'
+        end
+        item
+          SourceMemberName = 'nome'
+          ControlMemberName = 'nome'
+        end
+        item
+          SourceMemberName = 'bairro'
+          ControlMemberName = 'bairro'
+        end
+        item
+          SourceMemberName = 'complemento'
+          ControlMemberName = 'complemento'
+        end
+        item
+          SourceMemberName = 'area'
+          ControlMemberName = 'area'
+        end
+        item
+          SourceMemberName = 'cidade'
+          ControlMemberName = 'cidade'
+        end>
+      FillHeaderExpressions = <>
+      FillBreakGroups = <>
+    end
+    object LinkFillControlToField2: TLinkFillControlToField
+      Category = 'Quick Bindings'
+      Control = lvClientes
+      Track = True
+      FillDataSource = BindSourceDB1
+      AutoFill = True
+      FillExpressions = <
+        item
+          SourceMemberName = 'nome'
+          ControlMemberName = 'nome'
+        end
+        item
+          SourceMemberName = 'telefone'
+          ControlMemberName = 'telefone'
+        end
+        item
+          SourceMemberName = 'endereco'
+          ControlMemberName = 'endereco'
+        end
+        item
+          SourceMemberName = 'numero'
+          ControlMemberName = 'numero'
+        end
+        item
+          SourceMemberName = 'complemento'
+          ControlMemberName = 'complemento'
+        end
+        item
+          SourceMemberName = 'bairro'
+          ControlMemberName = 'bairro'
+        end
+        item
+          SourceMemberName = 'id'
+          ControlMemberName = 'id'
+        end
+        item
+          SourceMemberName = 'cep'
+          ControlMemberName = 'CEP'
+        end
+        item
+          SourceMemberName = 'area'
+          ControlMemberName = 'area'
+        end
+        item
+          SourceMemberName = 'cidade'
+          ControlMemberName = 'cidade'
+        end>
+      FillHeaderExpressions = <>
+      FillBreakGroups = <>
+    end
+  end
+end

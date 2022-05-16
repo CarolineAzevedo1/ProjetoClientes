@@ -1,0 +1,62 @@
+object FormListarClientes: TFormListarClientes
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Layout1: TLayout
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Edit1: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Position.X = 15.000000000000000000
+      Position.Y = 15.000000000000000000
+      Margins.Left = 15.000000000000000000
+      Margins.Top = 15.000000000000000000
+      Size.Width = 466.000000000000000000
+      Size.Height = 42.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object btnBuscarCliente: TButton
+      Align = Right
+      Margins.Top = 15.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 517.000000000000000000
+      Position.Y = 15.000000000000000000
+      Size.Width = 113.000000000000000000
+      Size.Height = 42.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Buscar'
+    end
+  end
+  object Layout2: TLayout
+    Align = Center
+    Size.Width = 640.000000000000000000
+    Size.Height = 333.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object ListView1: TListView
+      ItemAppearanceClassName = 'TListItemAppearance'
+      ItemEditAppearanceClassName = 'TListItemShowCheckAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      Align = Left
+      Margins.Left = 15.000000000000000000
+      Position.X = 15.000000000000000000
+      Size.Width = 481.000000000000000000
+      Size.Height = 333.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+    end
+  end
+end

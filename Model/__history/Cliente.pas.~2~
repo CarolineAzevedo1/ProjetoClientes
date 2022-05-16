@@ -1,0 +1,24 @@
+unit Cliente;
+
+interface
+
+type
+
+TEndereco = class
+  rua: String;
+  bairro: String;
+  numero: String;
+  CEP: String;
+  cidade: String;
+  area: String;
+end;
+
+TCliente = class (TEndereco)
+public
+  nome: String;
+  telefone: String;
+end;
+
+implementation
+
+end.

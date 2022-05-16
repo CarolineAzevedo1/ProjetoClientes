@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/07/23 14:38:22.000.126,=C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 15:28:43.000.661,C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\User\Desktop\CRUD_Cliente\ListaClientes.fmx</Transaction>
+    <Transaction>2021/07/23 15:28:43.000.661,C:\Users\User\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\User\Desktop\CRUD_Cliente\ListaClientes.pas</Transaction>
+    <Transaction>2021/07/23 15:29:05.000.344,C:\Users\User\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\User\Desktop\CRUD_Cliente\ProjetoClientes.dproj</Transaction>
+    <Transaction>2021/07/23 15:31:21.000.396,=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 15:31:45.000.116,C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas=C:\Users\User\Desktop\CRUD_Cliente\Service\ServiceCliente.pas</Transaction>
+    <Transaction>2021/07/23 15:32:22.000.693,C:\Users\User\Desktop\CRUD_Cliente\ListaClientes.pas=C:\Users\User\Desktop\CRUD_Cliente\View\ListaClientes.pas</Transaction>
+    <Transaction>2021/07/23 15:32:22.000.693,C:\Users\User\Desktop\CRUD_Cliente\ListaClientes.fmx=C:\Users\User\Desktop\CRUD_Cliente\View\ListaClientes.fmx</Transaction>
+    <Transaction>2021/07/23 15:45:49.000.662,=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 15:46:20.000.885,C:\Users\User\Desktop\CRUD_Cliente\View\CadastroClientes.fmx=C:\Users\User\Desktop\CRUD_Cliente\Unit1.fmx</Transaction>
+    <Transaction>2021/07/23 15:46:20.000.885,C:\Users\User\Desktop\CRUD_Cliente\View\CadastroClientes.pas=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 16:05:15.000.432,=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 16:05:42.000.241,C:\Users\User\Desktop\CRUD_Cliente\Model\Cliente.pas=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 16:23:18.000.767,=C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas</Transaction>
+    <Transaction>2021/07/23 17:05:52.000.717,=C:\Users\User\Desktop\CRUD_Cliente\Unit2.pas</Transaction>
+    <Transaction>2021/07/23 17:06:08.000.544,C:\Users\User\Desktop\CRUD_Cliente\Repository\consulta.pas=C:\Users\User\Desktop\CRUD_Cliente\Unit2.pas</Transaction>
+    <Transaction>2021/07/23 17:08:14.000.602,C:\Users\User\Desktop\CRUD_Cliente\Repository\RepositoryCliente.pas=C:\Users\User\Desktop\CRUD_Cliente\Repository\consulta.pas</Transaction>
+    <Transaction>2021/07/26 16:33:21.000.692,=C:\Programas MemoCash\PDV\uConfigurarConexao.pas</Transaction>
+    <Transaction>2021/07/27 16:23:18.000.622,C:\Programas MemoCash\PDV\uConfigurarConexao.pas=</Transaction>
+    <Transaction>2021/07/27 16:24:22.000.212,=C:\Users\User\Desktop\CRUD_Cliente\uConfigurarConexao.pas</Transaction>
+    <Transaction>2021/07/27 16:41:09.000.292,C:\Users\User\Desktop\CRUD_Cliente\uConfigurarConexao.pas=</Transaction>
+    <Transaction>2021/07/28 13:29:58.000.883,=C:\Users\User\Desktop\CRUD_Cliente\uConfigurarConexao.pas</Transaction>
+    <Transaction>2021/07/30 09:31:01.000.333,C:\Users\User\Desktop\CRUD_Cliente\Unit1.pas=</Transaction>
+  </Transactions>
+	<ActiveMobileDevice>
+		<NoProfile iOSSimulator="iPhone5"/>
+	</ActiveMobileDevice>
+</BorlandProject>

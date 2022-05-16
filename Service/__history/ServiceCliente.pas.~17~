@@ -1,0 +1,108 @@
+unit ServiceCliente;
+
+interface
+
+uses
+  Cliente, RepositoryCliente, System.Generics.Collections, FireDAC.Comp.Client, FireDAC.DApt,
+  uConfigurarConexao, Datasnap.DBClient;
+
+type
+  TServiceCliente = class (TCliente)
+  public
+    filtro: String;
+    Cliente: TCliente;
+    RepositoryCliente: TRepository;
+
+    function CadastrarCliente: Boolean;
+    function EditarCliente: Boolean;
+    function ExcluirCliente: Boolean;
+    function Executar: Boolean;
+    function CarregarAreas: TList<String>;
+    procedure BuscarClientes(var data_set: TClientdataset);
+    constructor Create(FDCon : TFDConnection; pCliente: TCliente); overload;
+    constructor Create(FDCon: TFDConnection; filtro: String = ''); overload;
+end;
+
+implementation
+
+{ TServiceCliente }
+
+procedure TServiceCliente.BuscarClientes(var data_set: TClientdataset);
+var
+  ListaClientes: TObjectList<TCliente>;
+  Cliente: TCliente;
+begin
+  ListaClientes := RepositoryCliente.BuscarClientes;
+  data_set.Open;
+  data_set.DisableControls;
+  data_set.EmptyDataSet;
+
+  for Cliente in ListaClientes do
+  begin
+    with data_set do
+    begin
+      Insert;
+      FieldByName('id').AsInteger         := Cliente.id;
+      FieldByName('nome').AsString        := Cliente.nome;
+      FieldByName('area').AsString        := Cliente.area;
+      FieldByName('endereco').AsString    := Cliente.rua;
+      FieldByName('telefone').AsString    := Cliente.telefone;
+      FieldByName('numero').AsString      := Cliente.numero;
+      FieldByName('cep').AsString         := Cliente.CEP;
+      FieldByName('complemento').AsString := Cliente.complemento;
+      FieldByName('bairro').AsString      := Cliente.rua;
+      FieldByname('cidade').AsString      := Cliente.cidade;
+      Post;
+    end;
+  end;
+
+  data_set.Close;
+  data_set.EnableControls;
+  data_set.Open;
+end;
+
+function TServiceCliente.CadastrarCliente: Boolean;
+begin
+  RepositoryCliente.InserirCliente;
+end;
+
+function TServiceCliente.CarregarAreas: TList<String>;
+begin
+  result := RepositoryCliente.BuscarAreas;
+end;
+
+constructor TServiceCliente.Create(FDCon: TFDConnection; filtro: String = '');
+begin
+  RepositoryCliente := TRepository.CreateFiltro(FDcon, filtro);
+end;
+
+constructor TServiceCliente.Create(FDCon: TFDConnection; pCliente: TCliente);
+begin
+  Cliente := pCliente;
+  RepositoryCliente := TRepository.CreateCliente(conexao, Cliente);
+end;
+
+function TServiceCliente.EditarCliente: Boolean;
+begin
+  RepositoryCliente.AtualizarCliente;
+end;
+
+function TServiceCliente.ExcluirCliente: Boolean;
+begin
+  RepositoryCliente.ExcluirCliente;
+end;
+
+function TServiceCliente.Executar: Boolean;
+begin
+  try
+    if Cliente.id = 0 then
+      result := CadastrarCliente
+    else
+      result := EditarCliente;
+  except
+    result := false;
+  end;
+end;
+
+end.
+

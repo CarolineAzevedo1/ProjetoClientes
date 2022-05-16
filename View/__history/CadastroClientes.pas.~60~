@@ -1,0 +1,396 @@
+unit CadastroClientes;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
+  FMX.Layouts, FMX.Edit, FMX.Controls.Presentation, Cliente, System.Math,
+  FMX.ComboEdit, System.Generics.Collections, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.FMXUI.Wait, Data.DB,
+  FireDAC.Comp.Client, FireDAC.DApt, uConfigurarConexao;
+
+type
+  Tinstrucoes = (inserir, editar);
+  TFormCadastroClientes = class(TForm)
+    lbNome: TLabel;
+    lbBairro: TLabel;
+    lbArea: TLabel;
+    lbNumero: TLabel;
+    lbCEP: TLabel;
+    lbTelefone: TLabel;
+    edtNome: TEdit;
+    edtBairro: TEdit;
+    edtNumero: TEdit;
+    edtCEP: TEdit;
+    edtTelefone: TEdit;
+    Layout1: TLayout;
+    btnCancelarCadastro: TButton;
+    btnLimparCadastro: TButton;
+    btnSalvarCliente: TButton;
+    lbCidade: TLabel;
+    edtCidade: TEdit;
+    lbInstrucao: TLabel;
+    lbComplemento: TLabel;
+    edtEndereco: TEdit;
+    lbEndereco: TLabel;
+    edtComplemento: TEdit;
+    cmbAreas: TComboEdit;
+    procedure btnSalvarClienteClick(Sender: TObject);
+    procedure edtBairroKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure edtNumeroKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure edtNomeKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
+    procedure cmbAreasKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
+    procedure edtCEPKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
+    procedure edtCidadeKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure edtTelefoneKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure edtEnderecoKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure edtComplementoKeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure SomenteInteiro(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure btnCancelarCadastroClick(Sender: TObject);
+    procedure btnLimparCadastroClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    procedure Atribuicao;
+    procedure CarregarInformacoesTela(Cliente: TCliente);
+    procedure PreencherAreas;
+    procedure Conectar;
+    procedure Resetar;
+    function ValidarTelefone: Boolean;
+    function ValidarCep: Boolean;
+    function ValidarCamposObrigatorios(Edit: TEdit): Boolean;
+    { Public declarations }
+  end;
+
+  procedure ExibirTela(pCliente: TCliente = nil);
+
+var
+  FormCadastroClientes: TFormCadastroClientes;
+  Cliente: TCliente;
+
+implementation
+
+uses
+  ServiceCliente;
+
+{$R *.fmx}
+
+procedure TFormCadastroClientes.Atribuicao;
+begin
+
+  with Cliente do
+  begin
+    id          := ifthen(Cliente.id = 0, 0, Cliente.id);
+    nome        := edtNome.Text;
+    bairro      := edtBairro.Text;
+    area        := cmbAreas.Text;
+    numero      := edtNumero.Text;
+    cep         := edtCEP.Text;
+    telefone    := edtTelefone.Text;
+    cidade      := edtCidade.Text;
+    complemento := edtComplemento.Text;
+    rua         := edtEndereco.Text;
+  end;
+end;
+
+procedure TFormCadastroClientes.Conectar;
+begin
+  CONEXAO := TFDConnection.Create(self);
+  ConfigurarConexao;
+end;
+
+procedure TFormCadastroClientes.edtBairroKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if ValidarCamposObrigatorios(edtBairro) then
+    begin
+      edtBairro.SelectAll;
+      edtBairro.SetFocus;
+      Exit;
+    end;
+
+    edtCidade.SetFocus;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtCidadeKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if ValidarCamposObrigatorios(edtCidade) then
+    begin
+      edtCidade.SelectAll;
+      edtCidade.SetFocus;
+      Exit;
+    end;
+
+    cmbAreas.SetFocus;
+  end
+end;
+
+procedure TFormCadastroClientes.SomenteInteiro(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if not (KeyChar in ['0'.. '9']) then
+    KeyChar := #0;
+end;
+
+function TFormCadastroClientes.ValidarCamposObrigatorios(Edit: TEdit): Boolean;
+begin
+  result := false;
+  if Edit.Text.IsEmpty then
+  result := true;
+end;
+
+function TFormCadastroClientes.ValidarCep: Boolean;
+begin
+  result := true;
+
+  if (edtCEP.Text.Length < 9)then
+  begin
+    ShowMessage('CEP deve ter 8 dígitos!');
+    result := false;
+  end;
+end;
+
+function TFormCadastroClientes.ValidarTelefone: Boolean;
+begin
+  result := true;
+
+  if edtTelefone.Text.Length < 11 then
+  begin
+    ShowMessage('Formato de Telefone inválido');
+    result := false;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtComplementoKeyDown(Sender: TObject;
+  var Key: Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if edtComplemento.Text.IsEmpty then
+    begin
+      edtComplemento.SelectAll;
+      edtComplemento.SetFocus;
+      Exit;
+    end;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtEnderecoKeyDown(Sender: TObject;
+  var Key: Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if ValidarCamposObrigatorios(edtEndereco) then
+    begin
+      edtEndereco.SelectAll;
+      edtEndereco.SetFocus;
+      Exit;
+    end;
+
+    edtBairro.SetFocus;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtNomeKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if ValidarCamposObrigatorios(edtNome) then
+    begin
+        edtNome.SelectAll;
+        edtNome.SetFocus;
+        Exit;
+      end;
+
+    edtEndereco.SetFocus;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtNumeroKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if ValidarCamposObrigatorios(edtNumero) then
+    begin
+      edtNumero.SelectAll;
+      edtNumero.SetFocus;
+      Exit;
+    end;
+
+    edtComplemento.SetFocus;
+  end
+  else
+    SomenteInteiro(Sender, Key, KeyChar, Shift);;
+end;
+
+procedure TFormCadastroClientes.edtCEPKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+var
+  aux: String;
+begin
+  if (Key <> vkReturn) then
+  begin
+    if(key <> vkBack) and (edtCEP.Text.Length < 9) then
+    begin
+      if edtCEP.Text.Length = 4 then
+      begin
+        aux := KeyChar;
+        KeyChar := '-';
+        edtCEP.Text     := edtCEP.Text + aux;
+        edtCEP.Selstart :=  edtCEP.Text.Length;
+      end
+      else
+        SomenteInteiro(Sender, Key, KeyChar, Shift);
+    end
+    else
+      KeyChar := #0;
+
+    Exit;
+  end;
+  edtTelefone.SetFocus;
+
+  if ValidarCamposObrigatorios(edtCEP) or not ValidarCEP then
+  begin
+    edtCEP.SetFocus;
+    edtCEP.Selstart :=  edtCEP.Text.Length;
+  end;
+end;
+
+procedure TFormCadastroClientes.edtTelefoneKeyDown(Sender: TObject;
+  var Key: Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  if (key <> vkReturn) then
+  begin
+    if (Key <> vkBack) and (edtTelefone.Text.Length < 11) then
+      SomenteInteiro(Sender, Key, KeyChar, Shift)
+    else
+      KeyChar := #0;
+
+    Exit;
+  end;
+
+  edtNumero.SetFocus;
+
+  if ValidarCamposObrigatorios(edtTelefone) or not ValidarTelefone then
+    edtTelefone.SetFocus;
+end;
+
+procedure TFormCadastroClientes.cmbAreasKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Key = vkReturn then
+  begin
+    if cmbAreas.Text.IsEmpty then
+    begin
+      cmbAreas.SelectAll;
+      cmbAreas.SetFocus;
+      Exit;
+    end;
+
+    edtCEP.SetFocus;
+  end;
+end;
+
+procedure TFormCadastroClientes.PreencherAreas;
+var
+  i: Integer;
+  areas: TList<String>;
+  Service: TServiceCliente;
+begin
+  Service := TServiceCliente.Create(conexao);
+  areas   := Service.CarregarAreas;
+
+  cmbAreas.Items.Clear;
+  for i := 0 to areas.Count - 1 do
+  begin
+    cmbAreas.Items.Add(areas[i]);
+  end;
+end;
+
+procedure TFormCadastroClientes.Resetar;
+begin
+  edtNome.Text        := '';
+  edtBairro.Text      := '';
+  edtNumero.Text      := '';
+  cmbAreas.Text       := '';
+  edtCEP.Text         := '';
+  edtCidade.Text      := '';
+  edtTelefone.Text    := '';
+  edtEndereco.Text    := '';
+  edtComplemento.Text := '';
+end;
+
+procedure TFormCadastroClientes.btnCancelarCadastroClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+procedure TFormCadastroClientes.btnLimparCadastroClick(Sender: TObject);
+begin
+  Resetar;
+end;
+
+procedure TFormCadastroClientes.btnSalvarClienteClick(Sender: TObject);
+  var
+  Service: TServiceCliente;
+begin
+  Atribuicao;
+  Service := TServiceCliente.Create(conexao, Cliente);
+  Service.Executar;
+  Self.Close;
+end;
+
+procedure TFormCadastroClientes.CarregarInformacoesTela(Cliente: TCliente);
+begin
+  begin
+    lbInstrucao.Text    := 'Editar';
+    edtNome.Text        := Cliente.nome;
+    edtNumero.Text      := Cliente.numero;
+    edtTelefone.Text    := Cliente.telefone;
+    cmbAreas.Text       := Cliente.area;
+    edtCidade.Text      := Cliente.cidade;
+    edtCEP.Text         := Cliente.CEP;
+    edtBairro.Text      := Cliente.bairro;
+    edtComplemento.Text := Cliente.complemento;
+    edtEndereco.Text    := Cliente.rua;
+  end;
+end;
+
+procedure ExibirTela(pCliente: TCliente = nil);
+begin
+  FormCadastroClientes := TFormCadastroClientes.Create(nil);
+  Cliente := TCliente.Create;
+  FormCadastroClientes.Conectar;
+  FormCadastroClientes.PreencherAreas;
+
+  if Assigned(pCliente) then
+  begin
+    Cliente := pCliente;
+    FormCadastroClientes.CarregarInformacoesTela(Cliente);
+  end;
+
+  FormCadastroClientes.ShowModal;
+end;
+
+end.
